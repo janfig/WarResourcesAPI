@@ -1,30 +1,35 @@
 package com.example.warresourcesapi.resource;
 
+import com.example.warresourcesapi.price.Price;
+import com.example.warresourcesapi.price.PriceRepository;
 import com.example.warresourcesapi.utils.FileDownloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.warresourcesapi.utils.CSVOpener.arrayToResources;
-import static com.example.warresourcesapi.utils.CSVOpener.csvToArray;
+import static com.example.warresourcesapi.utils.CSVOpener.*;
 
 
 @Service
 public class ResourceService {
 
     private final Logger logger = LoggerFactory.getLogger(ResourceService.class);
-    private final ResourceRepository repository;
+    private final ResourceRepository resourceRepository;
+    private final PriceRepository priceRepository;
 
-    public ResourceService(ResourceRepository repository) {
-        this.repository = repository;
+    public ResourceService(ResourceRepository resourceRepository, PriceRepository priceRepository) {
+        this.resourceRepository = resourceRepository;
+        this.priceRepository = priceRepository;
     }
 
+
     public void fetchRecords() throws IOException, InterruptedException {
+        Resource resource = new Resource("gold");
+        resourceRepository.save(resource);
         logger.info("Resources repository empty! Downloading resources");
         FileDownloader.download(
                 FileDownloader.redirectLink("https://www.kaggle.com/api/v1/datasets/download/omdatas/historic-gold-prices"),
@@ -32,20 +37,21 @@ public class ResourceService {
         logger.info("Unzipping file");
         FileDownloader.unzip(FileDownloader.getResPath(), "gold.zip");
         ArrayList<String[]> arrayList = csvToArray(FileDownloader.getResPath(), "goldx.csv");
-        ArrayList<Resource> resources = arrayToResources(arrayList);
+        ArrayList<Price> prices = arrayToPrices(arrayList, resource);
         logger.info("Saving resource to repository");
-        repository.saveAll(resources);
+        priceRepository.saveAll(prices);
+
     }
 
     public List<Resource> getResources() throws IOException, InterruptedException {
-        if (repository.count() == 0) {
+        if (resourceRepository.count() == 0) {
             fetchRecords();
         }
-        return repository.findAll();
+        return resourceRepository.findAll();
     }
 
     public Resource getSingleResource(Long id) {
-        return repository.getById(id);
+        return resourceRepository.getById(id);
     }
 
 }

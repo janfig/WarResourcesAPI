@@ -1,5 +1,6 @@
 package com.example.warresourcesapi.utils;
 
+import com.example.warresourcesapi.price.Price;
 import com.example.warresourcesapi.resource.Resource;
 import com.example.warresourcesapi.war.War;
 
@@ -35,16 +36,16 @@ public class CSVOpener {
         return arrayList;
     }
 
-    public static ArrayList<Resource> arrayToResources(ArrayList<String[]> arrayList) {
-        ArrayList<Resource> resources = new ArrayList<>();
+    public static ArrayList<Price> arrayToPrices(ArrayList<String[]> arrayList, Resource resource) {
+        ArrayList<Price> prices = new ArrayList<>();
         for (int i = 1; i < arrayList.size(); i++) {
-            resources.add(new Resource(
-                    "gold",
+            prices.add(new Price(
+                    resource,
                     Double.parseDouble(arrayList.get(i)[1]),
                     formatDate(arrayList.get(i)[0])
             ));
         }
-        return resources;
+        return prices;
     }
 
     public static ArrayList<War> arrayToWars(ArrayList<String[]> arrayList) {

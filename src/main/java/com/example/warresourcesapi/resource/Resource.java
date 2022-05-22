@@ -1,10 +1,11 @@
 package com.example.warresourcesapi.resource;
 
+import com.example.warresourcesapi.price.Price;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -19,13 +20,13 @@ public class Resource {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Double price;
-    private LocalDate date;
 
-    public Resource(String name, Double price, LocalDate date) {
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Price> prices;
+
+
+    public Resource(String name) {
         this.name = name;
-        this.price = price;
-        this.date = date;
     }
 
     @Override
@@ -33,8 +34,7 @@ public class Resource {
         return "Resource{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", price=" + price +
-                ", date=" + date +
+                ", prices=" + prices +
                 '}';
     }
 }
