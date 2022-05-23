@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Table
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Price {
@@ -20,25 +21,19 @@ public class Price {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Resource resource;
+//    @ManyToOne
+//    private Resource resource;
+//
+//    @Column(name="resource_id")
+//    private Long resourceId;
 
-    private Double price;
-    private LocalDate date;
 
-    public Price(Resource resource, Double price, LocalDate date) {
-        this.resource = resource;
+    public Price(Double price, LocalDate date) {
         this.price = price;
         this.date = date;
     }
 
-    @Override
-    public String toString() {
-        return "Price{" +
-                "id=" + id +
-                ", resource=" + resource +
-                ", price=" + price +
-                ", date=" + date +
-                '}';
-    }
+    private Double price;
+    private LocalDate date;
+
 }

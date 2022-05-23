@@ -36,11 +36,10 @@ public class CSVOpener {
         return arrayList;
     }
 
-    public static ArrayList<Price> arrayToPrices(ArrayList<String[]> arrayList, Resource resource) {
+    public static ArrayList<Price> arrayToPrices(ArrayList<String[]> arrayList) {
         ArrayList<Price> prices = new ArrayList<>();
         for (int i = 1; i < arrayList.size(); i++) {
             prices.add(new Price(
-                    resource,
                     Double.parseDouble(arrayList.get(i)[1]),
                     formatDate(arrayList.get(i)[0])
             ));

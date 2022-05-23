@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static com.example.warresourcesapi.utils.CSVOpener.*;
@@ -29,7 +31,7 @@ public class ResourceService {
 
     public void fetchRecords() throws IOException, InterruptedException {
         Resource resource = new Resource("gold");
-        resourceRepository.save(resource);
+        Resource resource2 = new Resource("oil");
         logger.info("Resources repository empty! Downloading resources");
         FileDownloader.download(
                 FileDownloader.redirectLink("https://www.kaggle.com/api/v1/datasets/download/omdatas/historic-gold-prices"),
@@ -37,10 +39,15 @@ public class ResourceService {
         logger.info("Unzipping file");
         FileDownloader.unzip(FileDownloader.getResPath(), "gold.zip");
         ArrayList<String[]> arrayList = csvToArray(FileDownloader.getResPath(), "goldx.csv");
-        ArrayList<Price> prices = arrayToPrices(arrayList, resource);
+        ArrayList<Price> prices = arrayToPrices(arrayList);
+        HashSet<Price> prices2 = new HashSet<>();
+        prices2.add(new Price(22.22, LocalDate.of(20,2,2)));
         logger.info("Saving resource to repository");
-        priceRepository.saveAll(prices);
-
+        resource.setPrices(new HashSet<>(prices));
+        resource2.setPrices(prices2);
+//        System.out.println(resource);
+        resourceRepository.save(resource);
+        resourceRepository.save(resource2);
     }
 
     public List<Resource> getResources() throws IOException, InterruptedException {
