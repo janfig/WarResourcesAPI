@@ -1,6 +1,5 @@
 package com.example.warresourcesapi.price;
 
-import com.example.warresourcesapi.resource.Resource;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 

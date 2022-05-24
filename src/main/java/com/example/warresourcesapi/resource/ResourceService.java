@@ -1,7 +1,6 @@
 package com.example.warresourcesapi.resource;
 
 import com.example.warresourcesapi.price.Price;
-import com.example.warresourcesapi.price.PriceRepository;
 import com.example.warresourcesapi.utils.FileDownloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +20,9 @@ public class ResourceService {
 
     private final Logger logger = LoggerFactory.getLogger(ResourceService.class);
     private final ResourceRepository resourceRepository;
-    private final PriceRepository priceRepository;
 
-    public ResourceService(ResourceRepository resourceRepository, PriceRepository priceRepository) {
+    public ResourceService(ResourceRepository resourceRepository) {
         this.resourceRepository = resourceRepository;
-        this.priceRepository = priceRepository;
     }
 
 
@@ -41,7 +38,7 @@ public class ResourceService {
         ArrayList<String[]> arrayList = csvToArray(FileDownloader.getResPath(), "goldx.csv");
         ArrayList<Price> prices = arrayToPrices(arrayList);
         HashSet<Price> prices2 = new HashSet<>();
-        prices2.add(new Price(22.22, LocalDate.of(20,2,2)));
+        prices2.add(new Price(22.22, LocalDate.of(20, 2, 2)));
         logger.info("Saving resource to repository");
         resource.setPrices(new HashSet<>(prices));
         resource2.setPrices(prices2);
@@ -50,15 +47,18 @@ public class ResourceService {
         resourceRepository.save(resource2);
     }
 
-    public List<Resource> getResources() throws IOException, InterruptedException {
-        if (resourceRepository.count() == 0) {
-            fetchRecords();
-        }
+    public List<Resource> getResources() {
         return resourceRepository.findAll();
+
     }
 
     public Resource getSingleResource(Long id) {
         return resourceRepository.getById(id);
     }
+
+    public Resource getResourceByName(String name) {
+        return resourceRepository.getByName(name);
+    }
+
 
 }
