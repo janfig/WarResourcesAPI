@@ -1,13 +1,12 @@
 package com.example.warresourcesapi.resource;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/resources")
@@ -19,15 +18,24 @@ public class ResourceController {
         this.service = service;
     }
 
+//    @GetMapping
+//    @JsonView(ResourceView.Basic.class)
+//    public List<Resource> getAll() {
+//        return service.getResources();
+//    }
+
+//    @GetMapping("id/{id}")
+//    public Resource getSingleResource(@PathVariable Long id) {
+//        return service.getSingleResource(id);
+//    }
+
     @GetMapping
     @JsonView(ResourceView.Basic.class)
-    public List<Resource> getAll() throws IOException, InterruptedException {
-        return service.getResources();
-    }
-
-    @GetMapping("id/{id}")
-    public Resource getSingleResource(@PathVariable Long id) {
-        return service.getSingleResource(id);
+    public List<Resource> getAll(
+            @RequestParam("id1") Long id1,
+            @RequestParam("id2") Long id2
+    ) {
+        return service.getResourcebyidBetween(id1, id2);
     }
 
     @GetMapping("name/{name}")
@@ -35,6 +43,25 @@ public class ResourceController {
         return service.getResourceByName(name);
     }
 
+    @GetMapping("id/{id}")
+    public ResponseEntity<Resource> getByDate(
+            @PathVariable("id") Long id,
+            @RequestParam("start_date") Optional<String> startDate,
+            @RequestParam("end_date") Optional<String> endDate
+    ) {
+
+        if (startDate.isPresent() && endDate.isPresent()) {
+            return new ResponseEntity<>(
+                    service.getResourcesFromDateRange(
+                            id,
+                            startDate.get(),
+                            endDate.get()
+                    ),
+                    HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(service.getSingleResource(id), HttpStatus.OK);
+        }
+    }
 
 
 }

@@ -2,12 +2,14 @@ package com.example.warresourcesapi.resource;
 
 import com.example.warresourcesapi.price.Price;
 import com.example.warresourcesapi.utils.FileDownloader;
+import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -58,6 +60,18 @@ public class ResourceService {
 
     public Resource getResourceByName(String name) {
         return resourceRepository.getByName(name);
+    }
+
+    public Resource getResourcesFromDateRange(Long id, String startDateStr, String endDateStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        var startDate = LocalDate.parse(startDateStr, formatter);
+        var endDate = LocalDate.parse(endDateStr, formatter);
+//        return resourceRepository.getResourcesByPricesBetween(id, startDate, endDate);
+        return resourceRepository.getResourceByIdAndPricesBetween(id, startDate, endDate);
+    }
+
+    public List<Resource> getResourcebyidBetween(Long id1, Long id2) {
+        return resourceRepository.getResourcesByIdBetween(id1, id2);
     }
 
 

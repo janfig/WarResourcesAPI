@@ -1,5 +1,6 @@
 package com.example.warresourcesapi.price;
 
+import com.example.warresourcesapi.resource.Resource;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
@@ -20,8 +21,8 @@ public class Price {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne
-//    private Resource resource;
+    @ManyToOne
+    private Resource resource;
 //
 //    @Column(name="resource_id")
 //    private Long resourceId;
