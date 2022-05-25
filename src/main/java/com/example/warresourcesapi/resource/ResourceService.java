@@ -67,7 +67,11 @@ public class ResourceService {
         var startDate = LocalDate.parse(startDateStr, formatter);
         var endDate = LocalDate.parse(endDateStr, formatter);
 //        return resourceRepository.getResourcesByPricesBetween(id, startDate, endDate);
-        return resourceRepository.getResourceByIdAndPricesBetween(id, startDate, endDate);
+        return new Resource(
+                id,
+                resourceRepository.getById(id).getName(),
+                resourceRepository.getResourceByIdAndPricesBetween(id, startDate, endDate)
+        );
     }
 
     public List<Resource> getResourcebyidBetween(Long id1, Long id2) {

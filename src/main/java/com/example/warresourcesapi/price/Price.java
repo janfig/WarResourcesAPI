@@ -22,18 +22,25 @@ public class Price {
     private Long id;
 
     @ManyToOne
+    @Getter(AccessLevel.NONE)
     private Resource resource;
 //
 //    @Column(name="resource_id")
 //    private Long resourceId;
 
 
+    private Double price;
+    private LocalDate date;
+
     public Price(Double price, LocalDate date) {
         this.price = price;
         this.date = date;
     }
 
-    private Double price;
-    private LocalDate date;
+    public Price(Long id, Double price, LocalDate date) {
+        this.id = id;
+        this.price = price;
+        this.date = date;
+    }
 
 }
