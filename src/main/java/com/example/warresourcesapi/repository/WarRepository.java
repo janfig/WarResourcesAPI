@@ -1,5 +1,6 @@
-package com.example.warresourcesapi.war;
+package com.example.warresourcesapi.repository;
 
+import com.example.warresourcesapi.model.War;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

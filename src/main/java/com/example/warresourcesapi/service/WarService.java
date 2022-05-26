@@ -1,5 +1,7 @@
-package com.example.warresourcesapi.war;
+package com.example.warresourcesapi.service;
 
+import com.example.warresourcesapi.model.War;
+import com.example.warresourcesapi.repository.WarRepository;
 import com.example.warresourcesapi.utils.FileDownloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

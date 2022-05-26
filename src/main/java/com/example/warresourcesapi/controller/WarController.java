@@ -1,5 +1,7 @@
-package com.example.warresourcesapi.war;
+package com.example.warresourcesapi.controller;
 
+import com.example.warresourcesapi.model.War;
+import com.example.warresourcesapi.service.WarService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

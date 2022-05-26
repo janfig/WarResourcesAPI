@@ -1,8 +1,7 @@
 package com.example.warresourcesapi.utils;
 
-import com.example.warresourcesapi.price.Price;
-import com.example.warresourcesapi.resource.Resource;
-import com.example.warresourcesapi.war.War;
+import com.example.warresourcesapi.model.Price;
+import com.example.warresourcesapi.model.War;
 
 import java.io.*;
 import java.time.LocalDate;

@@ -1,8 +1,9 @@
-package com.example.warresourcesapi.resource;
+package com.example.warresourcesapi.service;
 
-import com.example.warresourcesapi.price.Price;
+import com.example.warresourcesapi.model.Price;
+import com.example.warresourcesapi.model.Resource;
+import com.example.warresourcesapi.repository.ResourceRepository;
 import com.example.warresourcesapi.utils.FileDownloader;
-import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

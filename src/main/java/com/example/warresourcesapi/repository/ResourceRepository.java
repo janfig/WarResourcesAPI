@@ -1,6 +1,7 @@
-package com.example.warresourcesapi.resource;
+package com.example.warresourcesapi.repository;
 
-import com.example.warresourcesapi.price.Price;
+import com.example.warresourcesapi.model.Price;
+import com.example.warresourcesapi.model.Resource;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,7 @@ public interface ResourceRepository extends JpaRepository<Resource, Long> {
     //    @Query("select new com.demo.entities.ProductJoin(p.id, p.name, p.price, p.category.id, p.category.name) from Product p, Category c where p.category = c")
 //    Resource getResourcesByPricesBetween(Long id, LocalDate startDate, LocalDate endDate);
     @Query("SELECT " +
-            "new com.example.warresourcesapi.price.Price(p.id, p.price, p.date) " +
+            "new com.example.warresourcesapi.model.Price(p.id, p.price, p.date) " +
             "FROM " +
             "Resource r " +
             "inner join r.prices p " +

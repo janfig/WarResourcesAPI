@@ -1,5 +1,8 @@
-package com.example.warresourcesapi.resource;
+package com.example.warresourcesapi.controller;
 
+import com.example.warresourcesapi.model.Resource;
+import com.example.warresourcesapi.service.ResourceService;
+import com.example.warresourcesapi.views.ResourceView;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

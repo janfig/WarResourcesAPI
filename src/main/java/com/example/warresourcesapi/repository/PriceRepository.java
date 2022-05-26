@@ -1,5 +1,6 @@
-package com.example.warresourcesapi.price;
+package com.example.warresourcesapi.repository;
 
+import com.example.warresourcesapi.model.Price;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

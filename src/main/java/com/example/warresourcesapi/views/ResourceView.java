@@ -1,4 +1,4 @@
-package com.example.warresourcesapi.resource;
+package com.example.warresourcesapi.views;
 
 public class ResourceView {
     public static class Basic {

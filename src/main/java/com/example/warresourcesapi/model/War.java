@@ -1,4 +1,4 @@
-package com.example.warresourcesapi.war;
+package com.example.warresourcesapi.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

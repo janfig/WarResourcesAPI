@@ -1,7 +1,6 @@
-package com.example.warresourcesapi.resource;
+package com.example.warresourcesapi.model;
 
-import com.example.warresourcesapi.price.Price;
-import com.fasterxml.jackson.annotation.JsonFilter;
+import com.example.warresourcesapi.views.ResourceView;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.*;
