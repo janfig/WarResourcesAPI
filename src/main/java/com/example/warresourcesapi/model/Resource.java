@@ -3,9 +3,15 @@ package com.example.warresourcesapi.model;
 import com.example.warresourcesapi.views.ResourceView;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.IOException;
 import java.util.Set;
 
 @Entity
@@ -16,7 +22,7 @@ import java.util.Set;
 @Table
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 //@JsonFilter("resourceFilter")
-public class Resource {
+public class Resource{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +42,7 @@ public class Resource {
     }
 
 
+
     @Override
     public String toString() {
         return "Resource{" +
@@ -44,4 +51,5 @@ public class Resource {
                 ", prices=" + prices +
                 '}';
     }
+
 }

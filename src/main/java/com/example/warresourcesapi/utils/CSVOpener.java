@@ -11,13 +11,18 @@ import java.util.ArrayList;
 public class CSVOpener {
 
     public static void main(String[] args) throws IOException {
-        ArrayList<String[]> lista = csvToArray("/home/janek/Downloads/","INTRA-STATE WARS v5.1 CSV.csv");
+        ArrayList<String[]> lista = csvToArray("/home/janek/Downloads/","crude-oil-price.csv");
 //        ArrayList<String[]> lista = csvToArray("/home/janek/Downloads/", "Conflicts participants.csv");
 //        ArrayList<Resource> resources = arrayToResources(lista);
-        ArrayList<War> wars = arrayToWars(lista);
-        for (var el : wars) {
+//        ArrayList<War> wars = arrayToWars(lista);
+//        for (var el : wars) {
+//            System.out.println(el);
+////            System.out.println(el[32]);
+//        }
+        ArrayList<Price> prices = arrayToPrices(lista);
+        for (var el: prices){
+//            System.out.println(el[0] + " " + el[1]);
             System.out.println(el);
-//            System.out.println(el[32]);
         }
 //        var startDate = LocalDate.of(-9, -1 , 22);
 
@@ -40,7 +45,7 @@ public class CSVOpener {
         for (int i = 1; i < arrayList.size(); i++) {
             prices.add(new Price(
                     Double.parseDouble(arrayList.get(i)[1]),
-                    formatDate(arrayList.get(i)[0])
+                    LocalDate.parse(arrayList.get(i)[0].substring(0, 10))
             ));
         }
         return prices;

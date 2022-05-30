@@ -1,7 +1,15 @@
 package com.example.warresourcesapi.utils;
 
+import com.example.warresourcesapi.model.Price;
+import com.example.warresourcesapi.model.Resource;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.asm.TypeReference;
 
 import java.io.*;
 import java.net.Authenticator;
@@ -14,7 +22,8 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.time.Duration;
-import java.util.Base64;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class FileDownloader extends Authenticator {
@@ -23,11 +32,10 @@ public class FileDownloader extends Authenticator {
     static private Logger logger = LoggerFactory.getLogger(FileDownloader.class);
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        download(
-                "https://correlatesofwar.org/data-sets/COW-war/intra-state-wars-v5-1.zip/@@download/file/Intra-State%20Wars%20v5.1.zip",
-                "file123.zip"
-                );
-        unzip(resPath, "file123.zip");
+        String json = downloadJSON("https://data.nasdaq.com/api/v3/datasets/LBMA/GOLD.json?api_key=yUmtgiXWovdimytaZ83r&column_index=1");
+        Resource resource = new Resource("dupa");
+        fillResource(json, resource);
+        System.out.println(resource.toString());
     }
 
     public static void download(String url, String fileName) throws IOException {
@@ -70,6 +78,7 @@ public class FileDownloader extends Authenticator {
 
     }
 
+
     public static void unzip(String path, String fileName) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder("unzip", path + fileName);
         pb.directory(new File(path));
@@ -84,4 +93,55 @@ public class FileDownloader extends Authenticator {
     public static void setResPath(String resPath) {
         FileDownloader.resPath = resPath;
     }
+
+    public static String downloadJSON(String url) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .build();
+        var uri = URI.create(url);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .timeout(Duration.ofMinutes(2))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
+        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return response.body();
+    }
+
+    public static void JsonConverter(String json) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        JsonNode pricesCore = tree.get("dataset").get("data");
+        Set<Price> prices = new HashSet<>();
+        for (var el : pricesCore) {
+            prices.add(new Price(
+                    el.get(1).asDouble(),
+                    LocalDate.parse(el.get(0).asText())
+                    ));
+        }
+        Resource resource = new Resource("zlotko");
+        resource.setPrices(prices);
+        System.out.println(resource);
+//        Set<Price> prices =
+//                mapper.readValue(pricesCore, new TypeReference<Set<Price>>(){});
+//        Set<Price> prices = mapper.readValue(json, mapper.getTypeFactory().constructCollectionType(Set.class, Price.class));
+
+    }
+
+    public static void fillResource(String json, Resource resource) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        JsonNode pricesCore = tree.get("dataset").get("data");
+        Set<Price> prices = new HashSet<>();
+        for (var el : pricesCore) {
+            prices.add(new Price(
+                    el.get(1).asDouble(),
+                    LocalDate.parse(el.get(0).asText())
+            ));
+        }
+        resource.setPrices(prices);
+        System.out.println("Resource " + resource.getName() + " filled.");
+    }
+
 }
