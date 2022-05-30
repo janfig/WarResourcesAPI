@@ -18,7 +18,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity createUser (@RequestBody UserCreateRequest userCreateRequest) {
         userService.createUser(userCreateRequest);
-        return ResponseEntity.ok().body("tokenxd");
+        return ResponseEntity.ok().body("");
     }
 
 }

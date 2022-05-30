@@ -30,6 +30,7 @@ public class UserService {
         apiUser.setUsername(userCreateRequest.getUsername());
         apiUser.setPassword(passwordEncoder.encode(userCreateRequest.getPassword()));
         apiUser.setRole(userCreateRequest.getRole());
+        apiUser.setEmail(userCreateRequest.getEmail());
         userRepository.save(apiUser);
     }
 }
