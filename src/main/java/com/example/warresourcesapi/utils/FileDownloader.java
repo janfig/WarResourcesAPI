@@ -21,6 +21,7 @@ import java.net.http.HttpResponse;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
@@ -28,10 +29,12 @@ import java.util.concurrent.TimeUnit;
 
 public class FileDownloader extends Authenticator {
 
-    static String resPath = "/home/janek/java-crash/projects/WarResourcesAPI/src/main/resources/static/";
+
+    static String resPath = System.getProperty("user.dir") + "/src/main/resources/static/";
     static private Logger logger = LoggerFactory.getLogger(FileDownloader.class);
 
     public static void main(String[] args) throws IOException, InterruptedException {
+
         String json = downloadJSON("https://data.nasdaq.com/api/v3/datasets/LBMA/GOLD.json?api_key=yUmtgiXWovdimytaZ83r&column_index=1");
         Resource resource = new Resource("dupa");
         fillResource(json, resource);
