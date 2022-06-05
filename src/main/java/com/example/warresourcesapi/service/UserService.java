@@ -24,8 +24,9 @@ public class UserService {
     public void createUser(UserCreateRequest userCreateRequest) {
         ApiUser apiUser = new ApiUser();
         Optional<ApiUser> byUsername = userRepository.findByUsername(userCreateRequest.getUsername());
-        if (byUsername.isPresent()) {
-            throw new RuntimeException("User already registered. Please use different username.");
+        var byEmail = userRepository.findByEmail(userCreateRequest.getEmail());
+        if (byEmail.isPresent()) {
+            throw new RuntimeException("User already registered. Please use different email.");
         }
         apiUser.setUsername(userCreateRequest.getUsername());
         apiUser.setPassword(passwordEncoder.encode(userCreateRequest.getPassword()));
