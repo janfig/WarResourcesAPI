@@ -1,5 +1,6 @@
 package com.example.warresourcesapi.service;
 
+import com.example.warresourcesapi.exception.BadRequestException;
 import com.example.warresourcesapi.model.ApiUser;
 import com.example.warresourcesapi.model.request.UserCreateRequest;
 import com.example.warresourcesapi.repository.UserRepository;
@@ -23,10 +24,10 @@ public class UserService {
 
     public void createUser(UserCreateRequest userCreateRequest) {
         ApiUser apiUser = new ApiUser();
-        Optional<ApiUser> byUsername = userRepository.findByUsername(userCreateRequest.getUsername());
         var byEmail = userRepository.findByEmail(userCreateRequest.getEmail());
         if (byEmail.isPresent()) {
-            throw new RuntimeException("User already registered. Please use different email.");
+//            throw new RuntimeException("User already registered. Please use different email.");
+            throw new BadRequestException("User already registered. Please use different email.");
         }
         apiUser.setUsername(userCreateRequest.getUsername());
         apiUser.setPassword(passwordEncoder.encode(userCreateRequest.getPassword()));
