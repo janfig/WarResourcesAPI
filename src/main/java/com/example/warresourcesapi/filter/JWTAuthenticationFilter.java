@@ -3,10 +3,12 @@ package com.example.warresourcesapi.filter;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.warresourcesapi.config.AuthenticationConfigConstants;
+import com.example.warresourcesapi.exception.ForbiddenRequestException;
 import com.example.warresourcesapi.model.ApiUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -45,7 +47,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication auth) throws IOException, ServletException {
         String token = JWT.create()
                 //was User get username
-            .withSubject(((ApiUser) auth.getPrincipal()).getId().toString())
+            .withSubject(((User) auth.getPrincipal()).getUsername())
             .withClaim("role", auth.getAuthorities().iterator().next().getAuthority())
             .withExpiresAt(new Date(System.currentTimeMillis() + AuthenticationConfigConstants.EXPIRATION_TIME))
             .sign(Algorithm.HMAC512(AuthenticationConfigConstants.SECRET.getBytes()));
