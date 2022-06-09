@@ -136,7 +136,7 @@ public class FileDownloader extends Authenticator {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode tree = mapper.readTree(json);
         JsonNode pricesCore = tree.get("dataset").get("data");
-        Set<Price> prices = new HashSet<>();
+        TreeSet<Price> prices = new TreeSet<>();
         for (var el : pricesCore) {
             prices.add(new Price(
                     el.get(1).asDouble(),

@@ -2,17 +2,15 @@ package com.example.warresourcesapi.config;
 
 import com.example.warresourcesapi.model.Price;
 import com.example.warresourcesapi.model.Resource;
-import com.example.warresourcesapi.repository.PriceRepository;
 import com.example.warresourcesapi.repository.ResourceRepository;
 import com.example.warresourcesapi.utils.FileDownloader;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 import static com.example.warresourcesapi.utils.CSVOpener.arrayToPrices;
 import static com.example.warresourcesapi.utils.CSVOpener.csvToArray;
@@ -27,7 +25,7 @@ public class ResourceConfig {
     CommandLineRunner commandLineRunner(
             ResourceRepository resourceRepository
     ) {
-        if(resourceRepository.count() >= 3)
+        if (resourceRepository.count() >= 3)
             return null;
         return args -> {
             ArrayList<Resource> resources = new ArrayList<>();
@@ -43,19 +41,47 @@ public class ResourceConfig {
                     FileDownloader.redirectLink("https://www.kaggle.com/api/v1/datasets/download/sc231997/crude-oil-price"),
                     "oil.zip"
             );
-            FileDownloader.unzip(FileDownloader.getResPath(),"oil.zip");
-            ArrayList<String[]> lista = csvToArray(FileDownloader.getResPath(),"crude-oil-price.csv");
+            FileDownloader.unzip(FileDownloader.getResPath(), "oil.zip");
+            ArrayList<String[]> lista = csvToArray(FileDownloader.getResPath(), "crude-oil-price.csv");
             ArrayList<Price> prices = arrayToPrices(lista);
             Resource oil = new Resource("oil");
-            oil.setPrices(new HashSet<>(prices));
+            oil.setPrices(new TreeSet<>(prices));
             System.out.println("Resource " + oil.getName() + " filled.");
 
             resources.add(gold);
             resources.add(silver);
             resources.add(oil);
 
+            fillMissingDays(gold);
+            fillMissingDays(silver);
+            fillMissingDays(oil);
+
             resourceRepository.saveAll(resources);
             System.out.println("Resources saved");
         };
     }
+
+
+
+    private void fillMissingDays(Resource resource) {
+        TreeSet<Price> prices = (TreeSet<Price>) resource.getPrices();
+        LocalDate date = prices.first().getDate();
+
+        TreeSet<Price> pricesToAdd = new TreeSet<>();
+
+        for (Price price : prices) {
+            long dayDiff = Math.abs(date.until(price.getDate(), ChronoUnit.DAYS));
+            for (int i = 0; i < dayDiff; i++) {
+                pricesToAdd.add(new Price(null, date.plusDays(i)));
+            }
+            date = date.plusDays(dayDiff + 1);
+        }
+
+        prices.addAll(pricesToAdd);
+
+        resource.setPrices(prices);
+
+    }
 }
+
+

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @ToString
 @Table
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-public class Price {
+public class Price implements Comparable<Price> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +42,10 @@ public class Price {
         this.date = date;
     }
 
+    @Override
+    public int compareTo(Price p) {
+        if(this.date.isAfter(p.date))
+            return 1;
+        return -1;
+    }
 }
