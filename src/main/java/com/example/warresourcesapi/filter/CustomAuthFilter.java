@@ -60,11 +60,12 @@ public class CustomAuthFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         AppUser user = (AppUser) authentication.getPrincipal();
+        //TODO: Add security constants class
         Algorithm algorithm = Algorithm.HMAC256("Secret".getBytes());
         String access_token = JWT.create()
                 .withSubject(String.valueOf(user.getId()))
                 .withIssuer(request.getRequestURI())
-//                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
         Map<String, String> token = new HashMap<>();
         token.put("Authorization", "Bearer " + access_token);

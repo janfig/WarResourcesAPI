@@ -6,7 +6,6 @@ import com.example.warresourcesapi.repository.RoleRepository;
 import com.example.warresourcesapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,8 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -36,12 +33,6 @@ public class UserService implements UserDetailsService {
         } else {
             log.info("User found in the db: {}", email);
         }
-
-//        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-//        user.getRoles().forEach(role -> {
-//            authorities.add(new SimpleGrantedAuthority(role.getName()));
-//        });
-
         return user;
     }
 
