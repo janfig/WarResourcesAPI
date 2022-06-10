@@ -37,16 +37,12 @@ public class UserService implements UserDetailsService {
             log.info("User found in the db: {}", email);
         }
 
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        user.getRoles().forEach(role -> {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-        });
+//        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+//        user.getRoles().forEach(role -> {
+//            authorities.add(new SimpleGrantedAuthority(role.getName()));
+//        });
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                authorities
-        );
+        return user;
     }
 
     public AppUser saveUser(AppUser user) {
