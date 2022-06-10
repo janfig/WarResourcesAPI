@@ -38,7 +38,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(userService.saveRole(role));
     }
 
-    @PostMapping("/role/addtouser")
+    @PatchMapping("/role/addtouser")
     public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserRequest request) {
         userService.addRoleToUser(request.getEmail(), request.getRoleName());
         return ResponseEntity.ok().build();

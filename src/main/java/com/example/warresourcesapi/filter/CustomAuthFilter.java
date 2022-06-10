@@ -3,6 +3,7 @@ package com.example.warresourcesapi.filter;
 import antlr.Token;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.example.warresourcesapi.model.AppUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,11 +39,22 @@ public class CustomAuthFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        log.info("Email is: {}, and password is: {}", email, password);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+        UsernamePasswordAuthenticationToken authenticationToken = null;
+        try {
+            AppUser user = new ObjectMapper()
+                    .readValue(request.getInputStream(), AppUser.class);
+
+            String email = user.getEmail();
+            String password = user.getPassword();
+            log.info("Email is: {}, and password is: {}", email, password);
+            authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return authenticationManager.authenticate(authenticationToken);
+
     }
 
     @Override
