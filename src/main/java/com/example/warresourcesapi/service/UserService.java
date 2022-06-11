@@ -1,39 +1,66 @@
 package com.example.warresourcesapi.service;
 
-import com.example.warresourcesapi.exception.BadRequestException;
-import com.example.warresourcesapi.exception.NotFoundException;
-import com.example.warresourcesapi.model.ApiUser;
-import com.example.warresourcesapi.model.request.UserCreateRequest;
+import com.example.warresourcesapi.model.AppUser;
+import com.example.warresourcesapi.model.Role;
+import com.example.warresourcesapi.repository.RoleRepository;
 import com.example.warresourcesapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
-
+@Transactional
+@Slf4j
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public ApiUser readUserByUsername (String username) {
-        var byEmail = userRepository.findByEmail(username);
-        if(byEmail.isEmpty()) {
-            throw new NotFoundException("There is no user with email: " + username);
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        AppUser user = userRepository.findByEmail(email);
+        if(user == null) {
+            log.error("User not found in the db");
+            throw new UsernameNotFoundException("User not found in the db");
+        } else {
+            log.info("User found in the db: {}", email);
         }
-        return byEmail.get();
+        return user;
     }
 
-    public void createUser(UserCreateRequest userCreateRequest) {
-        ApiUser apiUser = new ApiUser();
-        var byEmail = userRepository.findByEmail(userCreateRequest.getEmail());
-        if (byEmail.isPresent()) {
-            throw new BadRequestException("User already registered. Please use different email.");
-        }
-        apiUser.setUsername(userCreateRequest.getUsername());
-        apiUser.setPassword(passwordEncoder.encode(userCreateRequest.getPassword()));
-        apiUser.setRole(userCreateRequest.getRole());
-        apiUser.setEmail(userCreateRequest.getEmail());
-        userRepository.save(apiUser);
+    public AppUser saveUser(AppUser user) {
+        log.info("Saving new user {} to db", user.getUsername());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+
+    public Role saveRole(Role role) {
+        log.info("Saving new role {} to db", role.getName());
+        return roleRepository.save(role);
+    }
+
+    public void addRoleToUser(String email, String roleName) {
+        log.info("Adding role {} to user with email: {}", roleName, email);
+        AppUser user = userRepository.findByEmail(email);
+        Role role = roleRepository.findByName(roleName);
+        user.getRoles().add(role);
+    }
+
+    public AppUser getUser(String email) {
+        log.info("Fetching user withe mail: {}", email);
+        return userRepository.findByEmail(email);
+    }
+
+    public List<AppUser> getUsers() {
+        log.info("Fetching all users");
+        return userRepository.findAll();
     }
 }
