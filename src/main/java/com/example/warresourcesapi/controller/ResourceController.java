@@ -27,20 +27,6 @@ public class ResourceController {
         return service.getResources();
     }
 
-//    @GetMapping("id/{id}")
-//    public Resource getSingleResource(@PathVariable Long id) {
-//        return service.getSingleResource(id);
-//    }
-
-//    @GetMapping
-//    @JsonView(ResourceView.Basic.class)
-//    public List<Resource> getAll(
-//            @RequestParam("id1") Long id1,
-//            @RequestParam("id2") Long id2
-//    ) {
-//        return service.getResourcebyidBetween(id1, id2);
-//    }
-
     @GetMapping("name/{name}")
     public Resource getResourceById(@PathVariable String name) {
         return service.getResourceByName(name);

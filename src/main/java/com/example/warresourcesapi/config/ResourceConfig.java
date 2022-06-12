@@ -62,7 +62,7 @@ public class ResourceConfig {
     }
 
 
-
+    //TODO: Chyba trzeba to przesunąć
     private void fillMissingDays(Resource resource) {
         TreeSet<Price> prices = (TreeSet<Price>) resource.getPrices();
         LocalDate date = prices.first().getDate();

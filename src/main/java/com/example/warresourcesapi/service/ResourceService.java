@@ -1,5 +1,6 @@
 package com.example.warresourcesapi.service;
 
+import com.example.warresourcesapi.exception.NotFoundException;
 import com.example.warresourcesapi.model.Price;
 import com.example.warresourcesapi.model.Resource;
 import com.example.warresourcesapi.repository.ResourceRepository;
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -56,7 +58,8 @@ public class ResourceService {
     }
 
     public Resource getSingleResource(Long id) {
-        return resourceRepository.getById(id);
+       return resourceRepository.findById(id)
+               .orElseThrow(() -> new NotFoundException("There is no resource with given id"));
     }
 
     public Resource getResourceByName(String name) {
@@ -75,9 +78,6 @@ public class ResourceService {
         );
     }
 
-    public List<Resource> getResourcebyidBetween(Long id1, Long id2) {
-        return resourceRepository.getResourcesByIdBetween(id1, id2);
-    }
 
 
 }

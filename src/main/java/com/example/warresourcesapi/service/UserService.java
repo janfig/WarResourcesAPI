@@ -1,5 +1,7 @@
 package com.example.warresourcesapi.service;
 
+import com.example.warresourcesapi.exception.BadRequestException;
+import com.example.warresourcesapi.exception.ForbiddenRequestException;
 import com.example.warresourcesapi.model.AppUser;
 import com.example.warresourcesapi.model.Role;
 import com.example.warresourcesapi.repository.RoleRepository;
@@ -39,6 +41,8 @@ public class UserService implements UserDetailsService {
     public AppUser saveUser(AppUser user) {
         log.info("Saving new user {} to db", user.getUsername());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if(userRepository.findByEmail(user.getEmail()) != null)
+            throw new BadRequestException("This email is taken");
         return userRepository.save(user);
     }
 

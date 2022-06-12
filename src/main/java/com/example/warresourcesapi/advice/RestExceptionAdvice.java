@@ -28,7 +28,6 @@ public class RestExceptionAdvice {
     @ExceptionHandler(ForbiddenRequestException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse forbiddenRequestHandler(ForbiddenRequestException ex) {
-//        System.out.println(ex.);
         return new ErrorResponse(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 }
