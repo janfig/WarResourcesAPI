@@ -6,16 +6,14 @@ import com.example.warresourcesapi.model.AppUser;
 import com.example.warresourcesapi.model.Role;
 import com.example.warresourcesapi.model.request.RoleToUserRequest;
 import com.example.warresourcesapi.model.request.UserCreateRequest;
+import com.example.warresourcesapi.model.response.UserResponse;
 import com.example.warresourcesapi.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import javax.servlet.Servlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -24,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -63,8 +59,12 @@ public class UserController {
             e.printStackTrace();
         }
 
+    }
 
-//        return ResponseEntity.created(uri).body();
+    @GetMapping("/user/{id}")
+    public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
+        return ResponseEntity.ok().body(userService.getUser(id));
+
     }
 
     @PostMapping("/role/save")
@@ -77,6 +77,11 @@ public class UserController {
     public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserRequest request) {
         userService.addRoleToUser(request.getEmail(), request.getRoleName());
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/user/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
     }
 
 }

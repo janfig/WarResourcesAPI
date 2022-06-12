@@ -1,17 +1,11 @@
 package com.example.warresourcesapi.model;
 
-import com.example.warresourcesapi.views.ResourceView;
+import com.example.warresourcesapi.model.views.ResourceView;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import lombok.*;
 
 import javax.persistence.*;
-import java.io.IOException;
 import java.util.Set;
 
 @Entity

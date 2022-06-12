@@ -2,9 +2,11 @@ package com.example.warresourcesapi.service;
 
 import com.example.warresourcesapi.exception.BadRequestException;
 import com.example.warresourcesapi.exception.ForbiddenRequestException;
+import com.example.warresourcesapi.exception.NotFoundException;
 import com.example.warresourcesapi.model.AppUser;
 import com.example.warresourcesapi.model.Role;
 import com.example.warresourcesapi.model.request.UserCreateRequest;
+import com.example.warresourcesapi.model.response.UserResponse;
 import com.example.warresourcesapi.repository.RoleRepository;
 import com.example.warresourcesapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -76,13 +78,25 @@ public class UserService implements UserDetailsService {
         user.addRole(role);
     }
 
-    public AppUser getUser(String email) {
-        log.info("Fetching user withe mail: {}", email);
-        return userRepository.findByEmail(email);
+    public UserResponse getUser(Long id) {
+        log.info("Fetching user with id: {}", id);
+        var repoUser = userRepository.findById(id);
+        if (repoUser.isEmpty()) {
+            throw new NotFoundException("Given user does not exist");
+        }
+        var user = repoUser.get();
+       return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRoles());
     }
 
     public List<AppUser> getUsers() {
         log.info("Fetching all users");
         return userRepository.findAll();
+    }
+
+    public void deleteUser(Long id) {
+        log.info("Deleting user with id: {}", id);
+        if(!userRepository.findById(id).isPresent())
+            throw new NotFoundException("Given user does not exist");
+        userRepository.deleteById(id);
     }
 }
