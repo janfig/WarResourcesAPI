@@ -3,6 +3,7 @@ package com.example.warresourcesapi.config;
 import com.example.warresourcesapi.model.Price;
 import com.example.warresourcesapi.model.Resource;
 import com.example.warresourcesapi.repository.ResourceRepository;
+import com.example.warresourcesapi.repository.RoleRepository;
 import com.example.warresourcesapi.utils.FileDownloader;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +24,8 @@ public class ResourceConfig {
 
     @Bean
     CommandLineRunner commandLineRunner(
-            ResourceRepository resourceRepository
+            ResourceRepository resourceRepository,
+            RoleRepository roleRepository
     ) {
         if (resourceRepository.count() >= 3)
             return null;

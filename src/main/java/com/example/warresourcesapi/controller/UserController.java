@@ -40,12 +40,12 @@ public class UserController {
     }
 
     @PostMapping("/user/save")
-    public void createUser(@RequestBody AppUser user,
+    public void createUser(@RequestBody UserCreateRequest userCreateRequest,
                                               HttpServletRequest request,
                                               HttpServletResponse response
     ) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/user/save").toUriString());
-        AppUser savedUser = userService.saveUser(user);
+        AppUser savedUser = userService.saveUser(userCreateRequest);
 
         // TODO: Zroibć utilty dla tworzenia tokena
         try {

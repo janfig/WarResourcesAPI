@@ -1,9 +1,7 @@
 package com.example.warresourcesapi.model;
 
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +20,7 @@ public class AppUser implements UserDetails {
     private Long id;
     private String username;
     private String password;
+
     @Column(unique = true)
     private String email;
 
@@ -32,9 +31,12 @@ public class AppUser implements UserDetails {
         this.roles = roles;
     }
 
-    //TODO: Nie można nadać tej samej roli kilka razy
     @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Role> roles = new ArrayList<>();
+    private Collection<Role> roles = new HashSet<>();
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

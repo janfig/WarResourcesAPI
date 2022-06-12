@@ -28,12 +28,12 @@ public class ResourceController {
     }
 
     @GetMapping("name/{name}")
-    public Resource getResourceById(@PathVariable String name) {
+    public Resource getByName(@PathVariable String name) {
         return service.getResourceByName(name);
     }
 
     @GetMapping("id/{id}")
-    public ResponseEntity<Resource> getByDate(
+    public ResponseEntity<Resource> getById(
             @PathVariable("id") Long id,
             @RequestParam("start_date") Optional<String> startDate,
             @RequestParam("end_date") Optional<String> endDate
