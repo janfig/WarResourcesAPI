@@ -129,8 +129,7 @@ public class UserService implements UserDetailsService {
             user.setUsername(request.getUsername());
         if (!request.getPassword().equals("")) {
             var encodedPassword = passwordEncoder.encode(request.getPassword());
-            var encodedOldPassword = passwordEncoder.encode(request.getOld_password());
-            if(!encodedOldPassword.equals(user.getPassword()))
+            if(!passwordEncoder.matches(request.getOld_password(), user.getPassword()))
                 throw new BadRequestException("Old password is incorrect");
             user.setPassword(encodedPassword);
         }
