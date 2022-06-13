@@ -1,15 +1,19 @@
 package com.example.warresourcesapi.controller;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.warresourcesapi.model.AppUser;
 import com.example.warresourcesapi.model.Role;
 import com.example.warresourcesapi.model.request.RoleToUserRequest;
 import com.example.warresourcesapi.model.request.UserCreateRequest;
+import com.example.warresourcesapi.model.request.UserUpdateRequest;
 import com.example.warresourcesapi.model.response.UserResponse;
 import com.example.warresourcesapi.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +26,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping(value = "/api")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
     private final UserService userService;
 
@@ -61,10 +68,11 @@ public class UserController {
 
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
-        return ResponseEntity.ok().body(userService.getUser(id));
 
+    @GetMapping("/user")
+    public ResponseEntity<UserResponse> getUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Long id = userService.getAuthId();
+        return ResponseEntity.ok().body(userService.getUser(id));
     }
 
     @PostMapping("/role/save")
@@ -79,9 +87,17 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/user/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    @DeleteMapping("/user")
+    public ResponseEntity<?>  deleteUser() {
+        Long id = userService.getAuthId();
         userService.deleteUser(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/user")
+    public void updateUser(@RequestBody UserUpdateRequest request) {
+        Long id = userService.getAuthId();
+        userService.updateUser(id, request);
     }
 
 }

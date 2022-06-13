@@ -1,24 +1,40 @@
 package com.example.warresourcesapi.service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.warresourcesapi.exception.BadRequestException;
 import com.example.warresourcesapi.exception.ForbiddenRequestException;
 import com.example.warresourcesapi.exception.NotFoundException;
 import com.example.warresourcesapi.model.AppUser;
 import com.example.warresourcesapi.model.Role;
 import com.example.warresourcesapi.model.request.UserCreateRequest;
+import com.example.warresourcesapi.model.request.UserUpdateRequest;
 import com.example.warresourcesapi.model.response.UserResponse;
 import com.example.warresourcesapi.repository.RoleRepository;
 import com.example.warresourcesapi.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
+
+import static java.util.Arrays.stream;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Service
 @RequiredArgsConstructor
@@ -79,13 +95,13 @@ public class UserService implements UserDetailsService {
     }
 
     public UserResponse getUser(Long id) {
-        log.info("Fetching user with id: {}", id);
-        var repoUser = userRepository.findById(id);
-        if (repoUser.isEmpty()) {
-            throw new NotFoundException("Given user does not exist");
-        }
-        var user = repoUser.get();
-       return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRoles());
+                log.info("Fetching user with id: {}", id);
+                var repoUser = userRepository.findById(id);
+                if (repoUser.isEmpty()) {
+                    throw new NotFoundException("Given user does not exist");
+                }
+                var user = repoUser.get();
+                return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getRoles());
     }
 
     public List<AppUser> getUsers() {
@@ -98,5 +114,26 @@ public class UserService implements UserDetailsService {
         if(!userRepository.findById(id).isPresent())
             throw new NotFoundException("Given user does not exist");
         userRepository.deleteById(id);
+    }
+
+    public Long getAuthId() {
+        return Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+    }
+
+    public AppUser updateUser(Long id, UserUpdateRequest request) {
+        log.info("Updating user with id: {}", id);
+        AppUser user = userRepository.getById(id);
+        if(!request.getEmail().equals(""))
+            user.setEmail(request.getEmail());
+        if (!request.getUsername().equals(""))
+            user.setUsername(request.getUsername());
+        if (!request.getPassword().equals("")) {
+            var encodedPassword = passwordEncoder.encode(request.getPassword());
+            var encodedOldPassword = passwordEncoder.encode(request.getOld_password());
+            if(!encodedOldPassword.equals(user.getPassword()))
+                throw new BadRequestException("Old password is incorrect");
+            user.setPassword(encodedPassword);
+        }
+        return userRepository.save(user);
     }
 }
