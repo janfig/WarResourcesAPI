@@ -22,6 +22,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
@@ -29,13 +30,12 @@ import java.util.concurrent.TimeUnit;
 
 public class FileDownloader extends Authenticator {
 
-
     static String resPath = System.getProperty("user.dir") + "/src/main/resources/static/";
     static private Logger logger = LoggerFactory.getLogger(FileDownloader.class);
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        String json = downloadJSON("https://data.nasdaq.com/api/v3/datasets/LBMA/GOLD.json?api_key=yUmtgiXWovdimytaZ83r&column_index=1");
+        String json = downloadJSON("https://github.com/Jackhalabardnik/wars/blob/master/INTRA-STATE_State_participants%20v5.1%20CSV.csv");
         Resource resource = new Resource("dupa");
         fillResource(json, resource);
         System.out.println(resource.toString());
@@ -105,7 +105,7 @@ public class FileDownloader extends Authenticator {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .timeout(Duration.ofMinutes(2))
-                .header("Content-Type", "application/json")
+//                .header("Content-Type", "application/json")
                 .GET()
                 .build();
         var response = client.send(request, HttpResponse.BodyHandlers.ofString());

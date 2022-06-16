@@ -27,7 +27,7 @@ public class ResourceConfig {
             ResourceRepository resourceRepository,
             RoleRepository roleRepository
     ) {
-        if (resourceRepository.count() >= 3)
+        if (resourceRepository.count() >= 2)
             return null;
         return args -> {
             ArrayList<Resource> resources = new ArrayList<>();
@@ -39,24 +39,24 @@ public class ResourceConfig {
             Resource silver = new Resource("silver");
             fillResource(json, silver);
 
-            FileDownloader.download(
-                    FileDownloader.redirectLink("https://www.kaggle.com/api/v1/datasets/download/sc231997/crude-oil-price"),
-                    "oil.zip"
-            );
-            FileDownloader.unzip(FileDownloader.getResPath(), "oil.zip");
-            ArrayList<String[]> lista = csvToArray(FileDownloader.getResPath(), "crude-oil-price.csv");
-            ArrayList<Price> prices = arrayToPrices(lista);
-            Resource oil = new Resource("oil");
-            oil.setPrices(new TreeSet<>(prices));
-            System.out.println("Resource " + oil.getName() + " filled.");
+//            FileDownloader.download(
+//                    FileDownloader.redirectLink("https://www.kaggle.com/api/v1/datasets/download/sc231997/crude-oil-price"),
+//                    "oil.zip"
+//            );
+//            FileDownloader.unzip(FileDownloader.getResPath(), "oil.zip");
+//            ArrayList<String[]> lista = csvToArray(FileDownloader.getResPath(), "crude-oil-price.csv");
+//            ArrayList<Price> prices = arrayToPrices(lista);
+//            Resource oil = new Resource("oil");
+//            oil.setPrices(new TreeSet<>(prices));
+//            System.out.println("Resource " + oil.getName() + " filled.");
 
             resources.add(gold);
             resources.add(silver);
-            resources.add(oil);
+//            resources.add(oil);
 
             fillMissingDays(gold);
             fillMissingDays(silver);
-            fillMissingDays(oil);
+//            fillMissingDays(oil);
 
             resourceRepository.saveAll(resources);
             System.out.println("Resources saved");

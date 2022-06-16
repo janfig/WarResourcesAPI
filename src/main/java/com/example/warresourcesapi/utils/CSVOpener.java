@@ -2,6 +2,7 @@ package com.example.warresourcesapi.utils;
 
 import com.example.warresourcesapi.model.Price;
 import com.example.warresourcesapi.model.War;
+import com.opencsv.CSVReader;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -10,34 +11,29 @@ import java.util.ArrayList;
 
 public class CSVOpener {
 
-    public static void main(String[] args) throws IOException {
-        ArrayList<String[]> lista = csvToArray("/home/janek/Downloads/","crude-oil-price.csv");
-//        ArrayList<String[]> lista = csvToArray("/home/janek/Downloads/", "Conflicts participants.csv");
-//        ArrayList<Resource> resources = arrayToResources(lista);
-//        ArrayList<War> wars = arrayToWars(lista);
-//        for (var el : wars) {
-//            System.out.println(el);
-////            System.out.println(el[32]);
-//        }
-        ArrayList<Price> prices = arrayToPrices(lista);
-        for (var el: prices){
-//            System.out.println(el[0] + " " + el[1]);
-            System.out.println(el);
-        }
-//        var startDate = LocalDate.of(-9, -1 , 22);
+    public static void main(String[] args) throws IOException, InterruptedException {
+        String csv = FileDownloader.downloadJSON("https://raw.githubusercontent.com/Jackhalabardnik/wars/master/INTRA-STATE_State_participants%20v5.1%20CSV.csv");
+        ArrayList<String[]> arrayList = csvToArray(csv);
+        assert arrayList != null;
+        ArrayList<War> wars = arrayToWars(arrayList);
 
     }
 
+    public static ArrayList<String[]> csvToArray(String csv) {
+        try {
+            StringReader stringReader = new StringReader(csv);
+            CSVReader csvReader = new CSVReader(stringReader);
+            ArrayList<String[]> arrayList = new ArrayList<>();
+            String[] nextRecord;
 
-    public static ArrayList<String[]> csvToArray(String path, String fileName) throws IOException {
-        String line = "";
-        String splitBy = ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
-        ArrayList<String[]> arrayList = new ArrayList<>();
-        BufferedReader br = new BufferedReader(new FileReader(path + fileName));
-        while ((line = br.readLine()) != null) {
-            arrayList.add(line.split(splitBy, -1));
+            while ((nextRecord = csvReader.readNext()) != null) {
+                arrayList.add(nextRecord);
+            }
+            return arrayList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        return arrayList;
     }
 
     public static ArrayList<Price> arrayToPrices(ArrayList<String[]> arrayList) {
@@ -53,15 +49,14 @@ public class CSVOpener {
 
     public static ArrayList<War> arrayToWars(ArrayList<String[]> arrayList) {
         ArrayList<War> resources = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate startDate = null;
-        LocalDate endDate = null;
-        int day, month, year = 0;
+        LocalDate startDate;
+        LocalDate endDate;
+        int day, month, year ;
         for (int i = 1; i < arrayList.size(); i++) {
             String[] a = arrayList.get(i);
-            day = (Integer.parseInt(a[9]) == -9 ? 1 : Integer.parseInt(a[9]));
-            month = (Integer.parseInt(a[8]) == -9 ? 1 : Integer.parseInt(a[8]));
-            year = (Integer.parseInt(a[10]) == -9 ? 1 : Integer.parseInt(a[10]));
+            day = (Integer.parseInt(a[10]) == -9 ? 1 : Integer.parseInt(a[10]));
+            month = (Integer.parseInt(a[9]) == -9 ? 1 : Integer.parseInt(a[9]));
+            year = (Integer.parseInt(a[11]) == -9 ? 1 : Integer.parseInt(a[11]));
             startDate = LocalDate.of(year, month, day);
             endDate = startDate.plusDays(Integer.parseInt(a[32]));
             resources.add(new War(
