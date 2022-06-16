@@ -58,7 +58,7 @@ public class CSVOpener {
             month = (Integer.parseInt(a[9]) == -9 ? 1 : Integer.parseInt(a[9]));
             year = (Integer.parseInt(a[11]) == -9 ? 1 : Integer.parseInt(a[11]));
             startDate = LocalDate.of(year, month, day);
-            endDate = startDate.plusDays(Integer.parseInt(a[32]));
+            endDate = startDate.plusDays(Integer.parseInt(a[33]));
             resources.add(new War(
                     arrayList.get(i)[1],
                     startDate,
