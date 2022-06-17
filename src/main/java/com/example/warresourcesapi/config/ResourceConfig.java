@@ -4,6 +4,7 @@ import com.example.warresourcesapi.model.Price;
 import com.example.warresourcesapi.model.Resource;
 import com.example.warresourcesapi.repository.ResourceRepository;
 import com.example.warresourcesapi.repository.RoleRepository;
+import com.example.warresourcesapi.utils.CSVOpener;
 import com.example.warresourcesapi.utils.FileDownloader;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -39,15 +40,12 @@ public class ResourceConfig {
             Resource silver = new Resource("silver");
             fillResource(json, silver);
 
-            FileDownloader.download(
-                    "https://www.eia.gov/global/scripts/jquery/highcharts/exporting-server/csv_exporter.php",
-                    "oil.csv"
-            );
-            ArrayList<String[]> lista = csvToArray(FileDownloader.getResPath(), "oil.csv");
-            assert lista != null;
-            ArrayList<Price> prices = arrayToPrices(lista);
+            String csv = FileDownloader.downloadJSON("https://raw.githubusercontent.com/Jackhalabardnik/wars/master/Europe_Brent_Spot_Price_FOB.csv");
+            ArrayList<String[]> arrayList = csvToArray(csv);
+            if(arrayList == null)
+                throw new RuntimeException("Aray with records is empty!");
             Resource oil = new Resource("oil");
-            oil.setPrices(new TreeSet<>(prices));
+            CSVOpener.arrayToOil(arrayList, oil);
             System.out.println("Resource " + oil.getName() + " filled.");
 
             resources.add(gold);

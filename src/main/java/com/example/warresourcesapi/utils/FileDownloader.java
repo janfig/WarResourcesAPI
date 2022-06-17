@@ -49,11 +49,12 @@ public class FileDownloader extends Authenticator {
     static private Logger logger = LoggerFactory.getLogger(FileDownloader.class);
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        String csv = FileDownloader.downloadJSON("https://raw.githubusercontent.com/Jackhalabardnik/wars/master/wars.csv");
+        String csv = FileDownloader.downloadJSON("https://raw.githubusercontent.com/Jackhalabardnik/wars/master/Europe_Brent_Spot_Price_FOB.csv");
         ArrayList<String[]> arrayList = csvToArray(csv);
         if(arrayList == null)
             throw new RuntimeException("Aray with records is empty!");
-        ArrayList<War> wars = arrayToWars(arrayList);
+        Resource resource = new Resource("oil");
+        CSVOpener.arrayToOil(arrayList, resource);
         for (var el: arrayList) {
             System.out.println(el[1]);
         }

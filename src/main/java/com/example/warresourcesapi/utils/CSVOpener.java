@@ -1,6 +1,7 @@
 package com.example.warresourcesapi.utils;
 
 import com.example.warresourcesapi.model.Price;
+import com.example.warresourcesapi.model.Resource;
 import com.example.warresourcesapi.model.War;
 import com.opencsv.CSVReader;
 
@@ -8,6 +9,8 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.TreeSet;
 
 public class CSVOpener {
 
@@ -89,6 +92,23 @@ public class CSVOpener {
             ));
         }
         return resources;
+    }
+
+    public static void arrayToOil(ArrayList<String[]> arrayList, Resource resource) {
+        TreeSet<Price> prices = new TreeSet<>();
+        double price;
+        LocalDate date;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/d/yyyy");
+        for (int i = 1; i < arrayList.size(); i++) {
+            String[] a = arrayList.get(i);
+            date = LocalDate.parse(a[0], formatter);
+            price = Double.parseDouble(a[1]);
+            prices.add(new Price(
+                    price,
+                    date
+            ));
+        }
+        resource.setPrices(prices);
     }
 
     public static LocalDate formatDate(String dateString) {
