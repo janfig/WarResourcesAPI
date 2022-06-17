@@ -84,7 +84,7 @@ public class CSVOpener {
             if(day == -7)
                 endDate = null;
             else
-                endDate = startDate.plusDays(Integer.parseInt(a[32]));
+                endDate = LocalDate.of(year, month, day);
             resources.add(new War(
                     arrayList.get(i)[1],
                     startDate,
