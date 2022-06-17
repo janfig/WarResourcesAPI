@@ -27,7 +27,8 @@ public class ResourceController {
     @GetMapping
     @JsonView(ResourceView.Basic.class)
     public List<Resource> getAll() {
-        return resourceService.getResources();
+        Long userId = userService.getAuthId();
+        return resourceService.getResources(userId);
     }
 
     @GetMapping("name/{name}")

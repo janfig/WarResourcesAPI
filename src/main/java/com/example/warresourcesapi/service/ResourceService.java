@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,8 +32,10 @@ public class ResourceService {
         this.roleRepository = roleRepository;
     }
 
-    public List<Resource> getResources() {
-        return resourceRepository.findAll();
+    public List<Resource> getResources(Long userId) {
+        if (isUserPremium(userId))
+            return resourceRepository.findAll();
+        return new ArrayList<Resource>(List.of(resourceRepository.getById(1L)));
 
     }
 
