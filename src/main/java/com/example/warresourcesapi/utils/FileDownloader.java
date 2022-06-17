@@ -8,12 +8,15 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.aspectj.apache.bcel.classfile.ConstantPool;
+import org.aspectj.apache.bcel.classfile.annotation.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.asm.TypeReference;
 
 import java.io.*;
 import java.net.Authenticator;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;
@@ -22,6 +25,8 @@ import java.net.http.HttpResponse;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -49,63 +54,10 @@ public class FileDownloader extends Authenticator {
     static private Logger logger = LoggerFactory.getLogger(FileDownloader.class);
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        String csv = FileDownloader.downloadJSON("https://raw.githubusercontent.com/Jackhalabardnik/wars/master/Europe_Brent_Spot_Price_FOB.csv");
-        ArrayList<String[]> arrayList = csvToArray(csv);
-        if(arrayList == null)
-            throw new RuntimeException("Aray with records is empty!");
-        Resource resource = new Resource("oil");
-        CSVOpener.arrayToOil(arrayList, resource);
-        for (var el: arrayList) {
-            System.out.println(el[1]);
-        }
-    }
-
-    public static void download(String url, String fileName) throws IOException {
-        Authenticator.setDefault(new MyAuth("janke27", "33de27cc0bc6955c48289d187e5dd499"));
-        ReadableByteChannel readableByteChannel = Channels.newChannel(new URL(url).openStream());
-        FileOutputStream fileOutputStream =
-                new FileOutputStream(resPath + fileName);
-        FileChannel fileChannel = fileOutputStream.getChannel();
-        fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
-    }
-
-    public static String redirectLink(String url) {
-        String username = "janke27";
-        String pass = "33de27cc0bc6955c48289d187e5dd499";
-        String credentials = username + ":" + pass;
-        String basicToken = Base64.getEncoder().encodeToString(credentials.getBytes());
-        var uri = URI.create(url);
-        String redirectLink = "";
-        HttpClient httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
-        try {
-            var request = HttpRequest.newBuilder(uri)
-                    .GET()
-                    .header("accept", "file")
-                    .header("authorization", "Basic " + basicToken)
-                    .build();
-            HttpResponse<String> response = httpClient.send(request,
-                    HttpResponse.BodyHandlers.ofString());
-
-            logger.info("Status code: " + response.statusCode());
-            logger.info("Headers: " + response.headers().allValues("location"));
-            logger.info("Body: " + response.body());
-            redirectLink = response.headers().allValues("location").get(0);
-            logger.info("Redirect link: " + redirectLink);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return redirectLink;
-
-    }
-
-
-    public static void unzip(String path, String fileName) throws IOException, InterruptedException {
-        ProcessBuilder pb = new ProcessBuilder("unzip", path + fileName);
-        pb.directory(new File(path));
-        Process p = pb.start();
-        p.waitFor(5, TimeUnit.SECONDS);
+        String json = downloadJSON("https://api.eia.gov/v2/natural-gas/pri/fut/data?api_key=D4umPxd4ER1AkOrwTo38jsztp54OgzRba7YiFKay&frequency=daily&facets%5Bseries%5D%5B%5D=RNGWHHD&sort%5B0%5D%5Bcolumn%5D=period&sort%5B0%5D%5Bdirection%5D=desc&data%5B1%5D=value&length=12830");
+        Resource resource = new Resource("tets");
+        JsonConverter(json, resource);
+        System.out.println(resource);
     }
 
     public static String pwd() throws IOException {
@@ -138,24 +90,18 @@ public class FileDownloader extends Authenticator {
         return response.body();
     }
 
-    public static void JsonConverter(String json) throws JsonProcessingException {
+    public static void JsonConverter(String json, Resource resource) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode tree = mapper.readTree(json);
-        JsonNode pricesCore = tree.get("dataset").get("data");
-        Set<Price> prices = new HashSet<>();
+        JsonNode pricesCore = tree.get("response").get("data");
+        Set<Price> prices = new TreeSet<>();
         for (var el : pricesCore) {
             prices.add(new Price(
-                    el.get(1).asDouble(),
-                    LocalDate.parse(el.get(0).asText())
+                    el.get("value").asDouble(),
+                    LocalDate.parse(el.get("period").asText())
             ));
         }
-        Resource resource = new Resource("zlotko");
         resource.setPrices(prices);
-        System.out.println(resource);
-//        Set<Price> prices =
-//                mapper.readValue(pricesCore, new TypeReference<Set<Price>>(){});
-//        Set<Price> prices = mapper.readValue(json, mapper.getTypeFactory().constructCollectionType(Set.class, Price.class));
-
     }
 
     public static void fillResource(String json, Resource resource) throws JsonProcessingException {
