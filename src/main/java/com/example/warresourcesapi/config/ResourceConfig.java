@@ -41,7 +41,7 @@ public class ResourceConfig {
             fillResource(json, silver);
 
             json = downloadJSON("https://api.eia.gov/v2/natural-gas/pri/fut/data?api_key=D4umPxd4ER1AkOrwTo38jsztp54OgzRba7YiFKay&frequency=daily&facets%5Bseries%5D%5B%5D=RNGWHHD&sort%5B0%5D%5Bcolumn%5D=period&sort%5B0%5D%5Bdirection%5D=desc&data%5B1%5D=value&length=12830");
-            Resource gas = new Resource("gas");
+            Resource gas = new Resource("natural gas");
             FileDownloader.JsonConverter(json, gas);
             System.out.println("Resource " + gas.getName() + " filled.");
 
