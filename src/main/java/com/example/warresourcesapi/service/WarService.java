@@ -28,13 +28,13 @@ public class WarService {
         if (repository.count() == 0) {
 
             //TODO: zamineić na logger SLF4J
-            logger.info("Resources repository empty! Downloading resources");
-            String csv = FileDownloader.downloadJSON("https://raw.githubusercontent.com/Jackhalabardnik/wars/master/INTRA-STATE_State_participants%20v5.1%20CSV.csv");
+            logger.info("Wars repository empty! Downloading wars");
+            String csv = FileDownloader.downloadJSON("https://raw.githubusercontent.com/Jackhalabardnik/wars/master/wars.csv");
             ArrayList<String[]> arrayList = csvToArray(csv);
             if(arrayList == null)
                 throw new RuntimeException("Aray with records is empty!");
             ArrayList<War> wars = arrayToWars(arrayList);
-            logger.info("Saving resource to repository");
+            logger.info("Saving wars to repository");
             repository.saveAll(wars);
         }
         return repository.findAll();

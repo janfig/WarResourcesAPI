@@ -2,6 +2,7 @@ package com.example.warresourcesapi.utils;
 
 import com.example.warresourcesapi.model.Price;
 import com.example.warresourcesapi.model.Resource;
+import com.example.warresourcesapi.model.War;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,18 +28,35 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import static com.example.warresourcesapi.utils.CSVOpener.arrayToWars;
+import static com.example.warresourcesapi.utils.CSVOpener.csvToArray;
 
 public class FileDownloader extends Authenticator {
 
-    static String resPath = System.getProperty("user.dir") + "/src/main/resources/static/";
+    //    static String resPath = System.getProperty("user.dir") + "/src/main/resources/static/";
+    static String resPath;
+
+    static {
+        try {
+            resPath = pwd() + "/src/main/resources/static/";
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     static private Logger logger = LoggerFactory.getLogger(FileDownloader.class);
 
     public static void main(String[] args) throws IOException, InterruptedException {
-
-        String json = downloadJSON("https://github.com/Jackhalabardnik/wars/blob/master/INTRA-STATE_State_participants%20v5.1%20CSV.csv");
-        Resource resource = new Resource("dupa");
-        fillResource(json, resource);
-        System.out.println(resource.toString());
+        String csv = FileDownloader.downloadJSON("https://raw.githubusercontent.com/Jackhalabardnik/wars/master/wars.csv");
+        ArrayList<String[]> arrayList = csvToArray(csv);
+        if(arrayList == null)
+            throw new RuntimeException("Aray with records is empty!");
+        ArrayList<War> wars = arrayToWars(arrayList);
+        for (var el: arrayList) {
+            System.out.println(el[1]);
+        }
     }
 
     public static void download(String url, String fileName) throws IOException {
@@ -89,6 +107,13 @@ public class FileDownloader extends Authenticator {
         p.waitFor(5, TimeUnit.SECONDS);
     }
 
+    public static String pwd() throws IOException {
+        ProcessBuilder pb = new ProcessBuilder("pwd");
+        Process process = pb.start();
+        String pwd = new String(process.getInputStream().readAllBytes());
+        return pwd.substring(0, pwd.length() - 1);
+    }
+
     public static String getResPath() {
         return resPath;
     }
@@ -121,7 +146,7 @@ public class FileDownloader extends Authenticator {
             prices.add(new Price(
                     el.get(1).asDouble(),
                     LocalDate.parse(el.get(0).asText())
-                    ));
+            ));
         }
         Resource resource = new Resource("zlotko");
         resource.setPrices(prices);

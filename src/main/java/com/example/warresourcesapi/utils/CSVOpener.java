@@ -19,6 +19,23 @@ public class CSVOpener {
 
     }
 
+    public static ArrayList<String[]> csvToArray(String path, String fileName) throws IOException {
+        try {
+            FileReader fileReader = new FileReader(path+ fileName);
+            CSVReader csvReader = new CSVReader(fileReader);
+            ArrayList<String[]> arrayList = new ArrayList<>();
+            String[] nextRecord;
+
+            while ((nextRecord = csvReader.readNext()) != null) {
+                arrayList.add(nextRecord);
+            }
+            return arrayList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static ArrayList<String[]> csvToArray(String csv) {
         try {
             StringReader stringReader = new StringReader(csv);
@@ -51,14 +68,20 @@ public class CSVOpener {
         ArrayList<War> resources = new ArrayList<>();
         LocalDate startDate;
         LocalDate endDate;
-        int day, month, year ;
+        int day, month, year;
         for (int i = 1; i < arrayList.size(); i++) {
             String[] a = arrayList.get(i);
-            day = (Integer.parseInt(a[10]) == -9 ? 1 : Integer.parseInt(a[10]));
-            month = (Integer.parseInt(a[9]) == -9 ? 1 : Integer.parseInt(a[9]));
-            year = (Integer.parseInt(a[11]) == -9 ? 1 : Integer.parseInt(a[11]));
+            day = (Integer.parseInt(a[9]) == -9 ? 1 : Integer.parseInt(a[9]));
+            month = (Integer.parseInt(a[8]) == -9 ? 1 : Integer.parseInt(a[8]));
+            year = (Integer.parseInt(a[10]) == -9 ? 1 : Integer.parseInt(a[10]));
             startDate = LocalDate.of(year, month, day);
-            endDate = startDate.plusDays(Integer.parseInt(a[33]));
+            day = (Integer.parseInt(a[12]) == -9 ? 1 : Integer.parseInt(a[12]));
+            month = (Integer.parseInt(a[11]) == -9 ? 1 : Integer.parseInt(a[11]));
+            year = (Integer.parseInt(a[13]) == -9 ? 1 : Integer.parseInt(a[13]));
+            if(day == -7)
+                endDate = null;
+            else
+                endDate = startDate.plusDays(Integer.parseInt(a[32]));
             resources.add(new War(
                     arrayList.get(i)[1],
                     startDate,
