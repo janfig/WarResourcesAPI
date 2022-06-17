@@ -21,18 +21,13 @@ public class SeederConfig implements ApplicationRunner {
     }
 
     private void seedRoles() {
-        if (roleRepository.findByName("ADMIN") == null) {
-            Role adminRole = new Role("ADMIN");
+        if (roleRepository.findByName("BASIC") == null) {
+            Role adminRole = new Role("BASIC");
             roleRepository.save(adminRole);
         }
-        if (roleRepository.findByName("STANDARD") == null) {
-            Role userRole = new Role("STANDARD");
+        if (roleRepository.findByName("PREMIUM") == null) {
+            Role userRole = new Role("PREMIUM");
             roleRepository.save(userRole);
         }
-        if (roleRepository.findByName("CUSTOM") == null) {
-            Role userRole = new Role("CUSTOM");
-            roleRepository.save(userRole);
-        }
-//        roleRepository.flush();
     }
 }

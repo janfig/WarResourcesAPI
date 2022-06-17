@@ -35,7 +35,8 @@ public class AppUser implements UserDetails {
     private Collection<Role> roles = new HashSet<>();
 
     public void addRole(Role role) {
-        roles.add(role);
+        if(!this.roles.contains(role))
+            roles.add(role);
     }
 
     @Override

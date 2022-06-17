@@ -67,7 +67,7 @@ public class UserService implements UserDetailsService {
         user.setPassword(encodedPassword);
         user.setEmail(request.getEmail());
 
-        Role role = roleRepository.findByName("STANDARD");
+        Role role = roleRepository.findByName("BASIC");
         user.addRole(role);
 
         if(request.getRoleName() != null) {

@@ -3,6 +3,7 @@ package com.example.warresourcesapi.controller;
 import com.example.warresourcesapi.model.Resource;
 import com.example.warresourcesapi.service.ResourceService;
 import com.example.warresourcesapi.model.views.ResourceView;
+import com.example.warresourcesapi.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,40 +16,43 @@ import java.util.Optional;
 @RequestMapping(path = "api/resources")
 public class ResourceController {
 
-    private final ResourceService service;
+    private final ResourceService resourceService;
+    private final UserService userService;
 
-    public ResourceController(ResourceService service) {
-        this.service = service;
+    public ResourceController(ResourceService service, UserService userService) {
+        this.resourceService = service;
+        this.userService = userService;
     }
 
     @GetMapping
     @JsonView(ResourceView.Basic.class)
     public List<Resource> getAll() {
-        return service.getResources();
+        return resourceService.getResources();
     }
 
     @GetMapping("name/{name}")
     public Resource getByName(@PathVariable String name) {
-        return service.getResourceByName(name);
+        return resourceService.getResourceByName(name);
     }
 
     @GetMapping("id/{id}")
     public ResponseEntity<Resource> getById(
-            @PathVariable("id") Long id,
+            @PathVariable("id") Long resourceId,
             @RequestParam("start_date") Optional<String> startDate,
             @RequestParam("end_date") Optional<String> endDate
     ) {
-
+        Long userId = userService.getAuthId();
         if (startDate.isPresent() && endDate.isPresent()) {
             return new ResponseEntity<>(
-                    service.getResourcesFromDateRange(
-                            id,
+                    resourceService.getResourcesFromDateRange(
+                            resourceId,
                             startDate.get(),
-                            endDate.get()
+                            endDate.get(),
+                            userId
                     ),
                     HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(service.getSingleResource(id), HttpStatus.OK);
+            return new ResponseEntity<>(resourceService.getSingleResource(resourceId, userId), HttpStatus.OK);
         }
     }
 
