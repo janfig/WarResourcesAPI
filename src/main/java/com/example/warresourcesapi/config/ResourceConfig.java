@@ -16,8 +16,7 @@ import java.util.*;
 
 import static com.example.warresourcesapi.utils.CSVOpener.arrayToPrices;
 import static com.example.warresourcesapi.utils.CSVOpener.csvToArray;
-import static com.example.warresourcesapi.utils.FileDownloader.downloadJSON;
-import static com.example.warresourcesapi.utils.FileDownloader.fillResource;
+import static com.example.warresourcesapi.utils.FileDownloader.*;
 
 
 @Configuration
@@ -66,28 +65,6 @@ public class ResourceConfig {
             resourceRepository.saveAll(resources);
             System.out.println("Resources saved");
         };
-    }
-
-
-    //TODO: Chyba trzeba to przesunąć
-    private void fillMissingDays(Resource resource) {
-        TreeSet<Price> prices = (TreeSet<Price>) resource.getPrices();
-        LocalDate date = prices.first().getDate();
-
-        TreeSet<Price> pricesToAdd = new TreeSet<>();
-
-        for (Price price : prices) {
-            long dayDiff = Math.abs(date.until(price.getDate(), ChronoUnit.DAYS));
-            for (int i = 0; i < dayDiff; i++) {
-                pricesToAdd.add(new Price(null, date.plusDays(i)));
-            }
-            date = date.plusDays(dayDiff + 1);
-        }
-
-        prices.addAll(pricesToAdd);
-
-        resource.setPrices(prices);
-
     }
 }
 

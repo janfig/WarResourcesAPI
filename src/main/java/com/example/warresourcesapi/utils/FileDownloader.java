@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -117,6 +118,51 @@ public class FileDownloader extends Authenticator {
         }
         resource.setPrices(prices);
         System.out.println("Resource " + resource.getName() + " filled.");
+    }
+
+    public static Price getPriceFromNasdaq(String json) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        JsonNode pricesCore = tree.get("dataset").get("data");
+        if(pricesCore.size() == 0)
+            return null;
+        return new Price(
+                pricesCore.get(0).get(1).asDouble(),
+                LocalDate.parse(pricesCore.get(0).get(0).asText())
+        );
+    }
+
+    public static Price getPriceFromEia(String json ) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        JsonNode pricesCore = tree.get("response").get("data");
+        if(pricesCore.size() == 0)
+            return null;
+        return new Price(
+                pricesCore.get(0).get("value").asDouble(),
+                LocalDate.parse(pricesCore.get(0).get("period").asText())
+        );
+    }
+
+
+    public static void fillMissingDays(Resource resource) {
+        TreeSet<Price> prices = (TreeSet<Price>) resource.getPrices();
+        LocalDate date = prices.first().getDate();
+
+        TreeSet<Price> pricesToAdd = new TreeSet<>();
+
+        for (Price price : prices) {
+            long dayDiff = Math.abs(date.until(price.getDate(), ChronoUnit.DAYS));
+            for (int i = 0; i < dayDiff; i++) {
+                pricesToAdd.add(new Price(null, date.plusDays(i)));
+            }
+            date = date.plusDays(dayDiff + 1);
+        }
+
+        prices.addAll(pricesToAdd);
+
+        resource.setPrices(prices);
+
     }
 
 }
