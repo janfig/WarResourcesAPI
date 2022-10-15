@@ -8,8 +8,6 @@ import com.example.warresourcesapi.model.Role;
 import com.example.warresourcesapi.repository.ResourceRepository;
 import com.example.warresourcesapi.repository.RoleRepository;
 import com.example.warresourcesapi.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,7 +19,6 @@ import java.util.List;
 @Service
 public class ResourceService {
 
-    private final Logger logger = LoggerFactory.getLogger(ResourceService.class);
     private final ResourceRepository resourceRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -35,13 +32,13 @@ public class ResourceService {
     public List<Resource> getResources(Long userId) {
         if (isUserPremium(userId))
             return resourceRepository.findAll();
-        return new ArrayList<Resource>(List.of(resourceRepository.getById(1L)));
+        return new ArrayList<>(List.of(resourceRepository.getById(1L)));
 
     }
 
     public Resource getSingleResource(Long resourceId, Long userId) {
         if (!isUserPremium(userId) && resourceId > 1)
-            throw new ForbiddenRequestException("Only premium users can access this reource");
+            throw new ForbiddenRequestException("Only premium users can access this resource");
         return resourceRepository.findById(resourceId)
                 .orElseThrow(() -> new NotFoundException("There is no resource with given id"));
     }
@@ -52,11 +49,10 @@ public class ResourceService {
 
     public Resource getResourcesFromDateRange(Long resourceId, String startDateStr, String endDateStr, Long userId) {
         if (!isUserPremium(userId) && resourceId > 1)
-            throw new ForbiddenRequestException("Only premium users can access this reource");
+            throw new ForbiddenRequestException("Only premium users can access this resource");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         var startDate = LocalDate.parse(startDateStr, formatter);
         var endDate = LocalDate.parse(endDateStr, formatter);
-//        return resourceRepository.getResourcesByPricesBetween(id, startDate, endDate);
         return new Resource(
                 resourceId,
                 resourceRepository.getById(resourceId).getName(),
