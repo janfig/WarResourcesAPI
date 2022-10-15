@@ -3,7 +3,6 @@ package com.example.warresourcesapi.service;
 import com.example.warresourcesapi.model.War;
 import com.example.warresourcesapi.repository.WarRepository;
 import com.example.warresourcesapi.utils.FileDownloader;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,13 +25,11 @@ public class WarService {
 
     public List<War> getWars() throws IOException, InterruptedException {
         if (repository.count() == 0) {
-
-            //TODO: zamineić na logger SLF4J
             logger.info("Wars repository empty! Downloading wars");
             String csv = FileDownloader.downloadJSON("https://raw.githubusercontent.com/Jackhalabardnik/wars/master/wars.csv");
             ArrayList<String[]> arrayList = csvToArray(csv);
             if(arrayList == null)
-                throw new RuntimeException("Aray with records is empty!");
+                throw new RuntimeException("Array with records is empty!");
             ArrayList<War> wars = arrayToWars(arrayList);
             logger.info("Saving wars to repository");
             repository.saveAll(wars);

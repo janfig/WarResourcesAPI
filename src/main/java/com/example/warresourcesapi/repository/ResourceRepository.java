@@ -13,9 +13,6 @@ import java.util.Set;
 @Repository
 public interface ResourceRepository extends JpaRepository<Resource, Long> {
     Resource getByName(String name);
-
-    //    @Query("select new com.demo.entities.ProductJoin(p.id, p.name, p.price, p.category.id, p.category.name) from Product p, Category c where p.category = c")
-//    Resource getResourcesByPricesBetween(Long id, LocalDate startDate, LocalDate endDate);
     @Query("SELECT " +
             "new com.example.warresourcesapi.model.Price(p.id, p.price, p.date) " +
             "FROM " +
